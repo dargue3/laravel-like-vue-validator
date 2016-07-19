@@ -1,0 +1,13 @@
+{
+  "name": "laravel-like-vue-validator",
+  "version": "1.0.0",
+  "author": "Dan Argue",
+  "description": "An input validator mixin inspired by Laravel's validator",
+  "license": "MIT",
+  "keywords": [
+    "vue",
+    "laravel",
+    "validation"
+  ],
+  "main": "src/Validator.js"
+}
