@@ -65,7 +65,7 @@ examples = [
 ### Error checking
 
 #### Automatic
-By default, whenever Vue detects a change, it will automatically re-run error checking on that variable. You can switch to manual error checking with an optional fourth argument.
+By default, whenever Vue detects a change, the validator will automatically re-run error checking on that variable. You can switch to manual error checking with an optional fourth argument.
 ```javascript
 this.me = 'Dan'
 this.you = 'github'
@@ -156,7 +156,7 @@ console.log(this.errors.users[1].email) 	// 'Invalid email'
 ```
 
 #### Manually assigned error messages
-For the people who want to manually control a message in `this.errors`, but want their code to look consistent
+For the people who want to manually control a message in `this.errors`, but want their error checking declarations to look consistent
 ```javascript
 this.name = {
 	first: '',
