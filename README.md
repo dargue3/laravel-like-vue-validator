@@ -1,4 +1,4 @@
-# Vue validator mixin inspired by Laravel's Validator API
+# A Vue validator inspired by Laravel's Validator API
 A simple input validator designed to be a mixin for Vue components. Simply register the variables and rules with the validator and you get automatic error detection. Supply the validator with an array of error messages and those can be easily injected into the DOM as feedback for the user.
 
 
@@ -9,9 +9,6 @@ Grab it in `src/Validator.js` and drop it wherever you keep your mixins.
 
 
 ## Usage
-
->  The following examples assume you have included the validator as a mixin in a Vue component.
-
 
 
 ### Registering Variables
@@ -107,9 +104,9 @@ this.registerErrorChecking('email', 'email', 'Invalid email')
 
 var errors = this.errorCheck('name')
 
-console.log(errors)					// 1
-console.log(this.errors.name) 		// 'Enter a name' 	
-console.log(this.errors.email) 		// '' 	
+console.log(errors)				// 1
+console.log(this.errors.name) 	// 'Enter a name' 	
+console.log(this.errors.email) 	// '' 	
 ```
 
 ##### Check a specific key on a variable
