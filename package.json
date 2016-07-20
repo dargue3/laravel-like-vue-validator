@@ -2,12 +2,15 @@
   "name": "laravel-like-vue-validator",
   "version": "1.0.0",
   "author": "Dan Argue",
+  "main": "src/Validator.js",
   "description": "An input validator mixin inspired by Laravel's validator",
   "license": "MIT",
+  "scripts": {
+    "test-build": "npm install babel-preset-es2015 babelify jasmine karma karma-browserify karma-jasmine karma-phantomjs-launcher phantomjs-prebuilt vue browserify watchify"
+  },
   "keywords": [
     "vue",
     "laravel",
     "validation"
-  ],
-  "main": "src/Validator.js"
+  ]
 }

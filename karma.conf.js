@@ -45,7 +45,7 @@ module.exports = function(config) {
     reporters: ['dots'],
 
     plugins: [
-        'phantomjs',
+        'phantomjs-prebuilt',
         'karma-browserify',
         'karma-jasmine',
         'karma-phantomjs-launcher',
