@@ -65,19 +65,23 @@ examples = [
 ### Error checking
 
 #### Automatic
-As an optional fourth argument you can tell Vue whether or not to watch this variable. When Vue detects a change, it will automatically re-run error checking.
+By default, whenever Vue detects a change, it will automatically re-run error checking on that variable. You can switch to manual error checking with an optional fourth argument.
 ```javascript
-this.name = 'Dan';
+this.me = 'Dan'
+this.you = 'github'
 
-this.registerErrorChecking('name', 'required', 'Enter a name', true) // true for automatic mode
+this.registerErrorChecking('me', 'required', 'Enter something')
+this.registerErrorChecking('you', 'required', 'Enter something', false)
 
-this.name = '';
+this.me = ''
+this.you = ''
 
-console.log(this.errors.name) // 'Enter a name'
+console.log(this.errors.me) 	// 'Enter something'
+console.log(this.errors.you) 	// ''
 ```
 
 #### Manual
-The `errorCheck()` function returns the number of detected errors in registered inputs. There are quite a few ways to use the `errorCheck()` function, but it all comes down to the scope of what was checked.
+The `errorCheck()` function returns the number of detected errors. There are quite a few ways to use the `errorCheck()` function, but it all comes down to your desired scope.
 
 ##### Check all registered variables
 ```javascript
@@ -89,7 +93,7 @@ this.registerErrorChecking('email', 'email', 'Invalid email')
 
 var errors = this.errorCheck() 
 
-console.log(errors)				// 1
+console.log(errors)				// 2
 console.log(this.errors.name) 	// 'Enter a name' 	
 console.log(this.errors.email) 	// 'Invalid email' 	
 ```
@@ -155,15 +159,15 @@ console.log(this.errors.users[1].email) 	// 'Invalid email'
 For the people who want to manually control a message in `this.errors`, but want their code to look consistent
 ```javascript
 this.name = {
-	firstname: '',
-	lastname: '',
+	first: '',
+	last: '',
 }
 
-this.manualErrorChecking('name.firstname');
-this.manualErrorChecking('name.lastname', 'Invalid lastname'); // optional default
+this.manualErrorChecking('name.first');
+this.manualErrorChecking('name.last', 'Invalid lastname'); // optional default
 
-console.log(this.errors.name.firstname) // ''
-console.log(this.errors.name.firstname) // 'Invalid lastname'
+console.log(this.errors.name.first) // ''
+console.log(this.errors.name.first) // 'Invalid lastname'
 ```
 
 
