@@ -107,9 +107,9 @@ this.registerErrorChecking('email', 'email', 'Invalid email')
 
 var errors = this.errorCheck('name')
 
-console.log(errors)						// 1
-console.log(this.errors.name) 			// 'Enter a name' 	
-console.log(this.errors.email) 			// '' 	
+console.log(errors)					// 1
+console.log(this.errors.name) 		// 'Enter a name' 	
+console.log(this.errors.email) 		// '' 	
 ```
 
 ##### Check a specific key on a variable
@@ -126,9 +126,9 @@ this.registerErrorChecking('location.city.zip', 'required|size:5', ['Enter a zip
 
 var errors = this.errorCheck('location.city.zip') 
 
-console.log(errors)									// 1
-console.log(this.errors.location.city.name) 		// '' 	
-console.log(this.errors.location.city.zip) 			// 'Invalid zip' 	
+console.log(errors)								// 1
+console.log(this.errors.location.city.name) 	// '' 	
+console.log(this.errors.location.city.zip) 		// 'Invalid zip' 	
 ```
 
 ##### Check a specific index in an array
@@ -149,9 +149,9 @@ this.registerErrorChecking('users.*.email', 'required|email', 'Invalid email')
 
 var errors = this.errorCheck('users.1.email') 
 
-console.log(errors)								// 1
-console.log(this.errors.users[0].email) 		// '' 	
-console.log(this.errors.users[1].email) 		// 'Invalid email' 	
+console.log(errors)							// 1
+console.log(this.errors.users[0].email) 	// '' 	
+console.log(this.errors.users[1].email) 	// 'Invalid email' 	
 ```
 
 #### Manually assigned error messages
@@ -165,8 +165,8 @@ this.name = {
 this.manualErrorChecking('name.firstname');
 this.manualErrorChecking('name.lastname', 'Invalid lastname'); // optional default
 
-console.log(this.errors.name.firstname) 	// ''
-console.log(this.errors.name.firstname) 	// 'Invalid lastname'
+console.log(this.errors.name.firstname) // ''
+console.log(this.errors.name.firstname) // 'Invalid lastname'
 ```
 
 
@@ -211,13 +211,13 @@ const vm = new Vue({
 		return [
 			users: [
 				{ name: 'Bob', email: 'bob@example.com' },
-				{ name: 'Wendy', email: 'bob@example' }, 	// note the missing '.com'
+				{ name: 'Wendy', email: 'bob@example' }, 	// note the error
 			],
 			
 			location: {
 				city: {
 					name: 'Bradley Beach',
-					zip: '070' 					// ouch, another one
+					zip: '070' 				// ouch, another one
 				}
 			}
 		];
@@ -247,17 +247,4 @@ const vm = new Vue({
 
 
 # Testing
-The repo comes prepared for a `karma-jasmine` test suite. Add the following to your `package.json` file, run an `npm install`, and run the test with `karma start`.
-```json
-"dependencies": {
-	"babel-preset-es2015": "^6.9.0",
-	"babelify": "^7.3.0",
-	"jasmine": "^2.3",
-	"karma": "^1.1.1",
-	"karma-browserify": "^4.4",
-	"karma-jasmine": "^1.0.2",
-	"karma-phantomjs-launcher": "^0.2",
-	"phantomjs": "^1.9",
-	"vue": "^1.0.26"
-}
-```
+The repo comes prepared for a `karma-jasmine` test suite. Run `npm run test-build` in the repo root followed by `karma start`.
