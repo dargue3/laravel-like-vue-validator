@@ -4,6 +4,7 @@ A simple input validator designed to be a mixin for Vue components. Simply regis
 
 ## Installation
 Grab it on `npm` with an `npm install --save laravel-like-vue-validator`
+
 Grab it in `src/Validator.js` and drop it wherever you keep your mixins.
 
 
