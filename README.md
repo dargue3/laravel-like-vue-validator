@@ -1,5 +1,5 @@
 # A Vue validator inspired by Laravel's Validator API
-A simple input validator designed to be a mixin for Vue components. Simply register the variables and rules with the validator and you get automatic error detection. Supply the validator with an array of error messages and those can be easily injected into the DOM as feedback for the user.
+A simple input validator designed to be a mixin for Vue components. Simply register the variables and rules with the validator and you get automatic error detection. Supply the validator with the error message to display and they can be easily injected into the DOM as feedback for the user.
 
 
 ## Installation
@@ -15,10 +15,8 @@ Grab it in `src/Validator.js` and drop it wherever you keep your mixins.
 
 Firstly, tell the validator which variables should be watched. You have a few options here:
 ```javascript
-this.name = 'validator'
-
+this.name = 'Dan'
 this.location.zip = '07720'
-
 this.users = [
 	{ name: 'Bob', email: 'bob@example.com' },
 	{ name: 'Wendy', email: 'wendy@example.com' }
@@ -55,6 +53,8 @@ examples = [
 	'string|regex:^[0-9]{1,2}$',
 ]
 ```
+
+ > Notes:
 
  > The `regex` rule currently does NOT support pipes within your expression argument. This is due to the fact that the rules string is parsed according to pipe delimiters.
 
@@ -155,21 +155,6 @@ console.log(this.errors.users[0].email) 	// ''
 console.log(this.errors.users[1].email) 	// 'Invalid email' 	
 ```
 
-#### Manually assigned error messages
-For the people who want to manually control a message in `this.errors`, but want their error checking declarations to look consistent
-```javascript
-this.name = {
-	first: '',
-	last: '',
-}
-
-this.manualErrorChecking('name.first');
-this.manualErrorChecking('name.last', 'Invalid lastname'); // optional default
-
-console.log(this.errors.name.first) // ''
-console.log(this.errors.name.first) // 'Invalid lastname'
-```
-
 
 
 ## Applications
@@ -186,22 +171,23 @@ Since Vue is reactive, you can very easily attach error messages near inputs.
 Simply place the following code into your `submit()` method and you are sure to have valid inputs!
 ```javascript
 /**
- * Make POST request
+ * POST form data to the server
  */
 submit() 
 {
 	if (this.errorCheck() > 0) {
 		return
 	}
-
-	//
+	else {
+		// you're good to go!	
+	}
 }
 ```
 
-# Putting it all together
+## Putting it all together
 ```javascript
 import Vue from 'vue'
-import Validator from 'laravel-like-vue-validator'
+import Validator from './mixins/Validator.js'
 
 const vm = new Vue({
 	template: '<div></div>',
@@ -224,9 +210,9 @@ const vm = new Vue({
 		];
 	},
 	
-	created: function()
+	beforeCompiled: function()
 	{
-		this.registerErrorChecking('users.*.name', 'required|max:50', ['Enter a name', 'Quit lying'])
+		this.registerErrorChecking('users.*.name', 'required|max:50', ['Enter a name', 'Your name is too long!'])
 		this.registerErrorChecking('users.*.email', 'required|email', 'Bad email')
 		
 		this.registerErrorChecking('location.city.zip', 'required|size:5|number', 'Invalid zip')

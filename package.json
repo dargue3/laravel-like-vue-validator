@@ -1,16 +1,27 @@
 {
-  "name": "laravel-like-vue-validator",
-  "version": "1.0.0",
-  "author": "Dan Argue",
-  "main": "src/Validator.js",
-  "description": "An input validator mixin inspired by Laravel's validator",
-  "license": "MIT",
-  "scripts": {
-    "test-build": "npm install babel-preset-es2015 babelify jasmine karma karma-browserify karma-jasmine karma-phantomjs-launcher phantomjs-prebuilt vue browserify watchify"
-  },
-  "keywords": [
-    "vue",
-    "laravel",
-    "validation"
-  ]
+	"name": "laravel-like-vue-validator",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/dargue3/laravel-like-vue-validator.git"
+	},
+	"version": "1.0.5",
+	"author": "Dan Argue",
+	"main": "dist/index.js",
+	"description": "An input validator mixin inspired by Laravel's validator",
+	"license": "MIT",
+	"files": [
+		"dist"
+	],
+	"scripts": {
+		"test-build": "npm install babel-preset-es2015 babelify jasmine karma karma-browserify karma-jasmine karma-phantomjs-launcher phantomjs-prebuilt vue browserify watchify",
+		"prepublish": "browserify src/Validator.js -o dist/index.js -t [ babelify --presets [ es2015 ] ] -t vueify"
+	},
+	"dependencies": {
+		"vue": "^1.0.26"
+	},
+	"keywords": [
+		"vue",
+		"laravel",
+		"validation"
+	]
 }

@@ -1,2 +1,5 @@
 /tests
-/karma.conf.js
+/src
+/node_modules
+karma.conf.js
+.gitignore

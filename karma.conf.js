@@ -18,37 +18,40 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-        { pattern: 'tests/*.spec.js', watched: false, included: true, served: true },
+        { pattern: 'tests/js/**/*.spec.js', watched: false, included: true, served: true },
     ],
 
 
     // list of files to exclude
     exclude: [
+      
     ],
 
 
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-        'tests/*.js': ['browserify']
+        'tests/js/**/*.js': ['browserify']
     },
 
     browserify: {
         debug: true, // debug=true to generate source maps
-        transform: [ ['babelify', {presets: ["es2015"]}] ],
+        transform: [ ['babelify', {presets: ["es2015"]}], 'vueify' ],
     },
 
 
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: ['dots'],
+    reporters: ['dots', 'clear-screen'],
 
     plugins: [
-        'phantomjs-prebuilt',
+        'phantomjs',
         'karma-browserify',
         'karma-jasmine',
+        'karma-chrome-launcher',
         'karma-phantomjs-launcher',
+        'karma-clear-screen-reporter',
     ],
 
 

@@ -1,39 +1,42 @@
 /**
  * Validator mixin inspired by Laravel's Validator API
+ *
+ * https://github.com/dargue3/laravel-like-vue-validator
  */
 export default
 {
 	data()
 	{
 		return {
-			vars_: {},
 			errors: {},
+			vars_: {},
 			errMsg_: {},
+			watching_: {},
 			validRules_: {
 				required: 	function(args) { return this.required_(args) },	// the field needs to have something in it
-				max: 				function(args) { return this.max_(args) }, 			// the field must be less than a given argument in length or size
-				min: 				function(args) { return this.min_(args) }, 			// the field must be greater than a given argument in length or size
-				size: 			function(args) { return this.size_(args) }, 		// the field must be of a given size in length or value
-				equals: 		function(args) { return this.equals_(args) }, 	// the field must equal to a given value
-				in: 				function(args) { return this.in_(args) }, 			// the field must equal one of the given arguments
-				boolean: 		function(args) { return this.boolean_(args) },  // the field must be a boolean
-				string: 		function(args) { return this.string_(args) },  	// the field must be a string
-				number: 		function(args) { return this.number_(args) },  	// the field must be a number
-				array: 			function(args) { return this.array_(args) },  	// the field must be an array
-				regex: 			function(args) { return this.regex_(args) },  	// the field must be a string that matches a given regular expression. BE CAREFUL, DON'T INCLUDE PIPES! 
+				max: 		function(args) { return this.max_(args) }, 		// the field must be less than a given argument in length or size
+				min: 		function(args) { return this.min_(args) }, 		// the field must be greater than a given argument in length or size
+				size: 		function(args) { return this.size_(args) }, 	// the field must be of a given size in length or value
+				equals: 	function(args) { return this.equals_(args) }, 	// the field must equal to a given value
+				in: 		function(args) { return this.in_(args) }, 		// the field must equal one of the given arguments
+				boolean: 	function(args) { return this.boolean_(args) },  // the field must be a boolean
+				string: 	function(args) { return this.string_(args) },  	// the field must be a string
+				number: 	function(args) { return this.number_(args) },  	// the field must be a number
+				array: 		function(args) { return this.array_(args) },  	// the field must be an array
+				regex: 		function(args) { return this.regex_(args) },  	// the field must be a string that matches a given regular expression. BE CAREFUL, DON'T INCLUDE PIPES! 
 				alpha_num: 	function(args) { return this.alphaNum(args) },  // the field must be a string with only alphanumeric characters
-				email: 			function(args) { return this.email_(args) }, 		// the field must be a valid email
+				email: 		function(args) { return this.email_(args) }, 	// the field must be a valid email
 			},
 			value_: null, 			// the value of the variable in question
-			path_: null, 				// the full path of the variable (e.g. user.name.firstname)
-			root_: null, 				// the name of the root of the variable (e.g. user)
-			key_: null,					// string of keys off of the root variable that make up the full path
+			path_: null, 			// the full path of the variable (e.g. user.name.firstname)
+			root_: null, 			// the name of the root of the variable (e.g. user)
+			key_: null,				// string of keys off of the root variable that make up the full path
 			rules_: null, 			// the rules applied to this variable
 			messages_: null, 		// the error messages to set
-			count_: null,				// the index into the array counter
+			count_: null,			// the index into the array counter
 			isArray_: null,			// whether or not the given variable is an array
-			arrayIndex_: null,	// which index of the given array to error check
-			temp_: {}, 					// temporary useless variable to utilize $set functionality
+			arrayIndex_: null,		// which index of the given array to error check
+			temp_: {}, 				// temporary useless variable to utilize $set functionality
 		}
 	},
 
@@ -87,10 +90,10 @@ export default
 
 			this.register_();
 
-			if (watch) {
+			if (watch && ! this.isArray_) {
 				// whenever this variable changes, re-run the error check
-				var root_ = this.root_;
-				this.$watch(this.root_, function() { this.errorCheck(root_) });
+				var path = this.path_;
+				this.watching_[path] = this.$watch(path, function() { this.errorCheck(path); });
 			}
 		},
 
@@ -317,7 +320,7 @@ export default
 		errorCheck(variable = null)
 		{
 			var errors = 0;
-
+			
 			if (variable === null) {
 				// check all
 				for (variable in this.vars_) {
@@ -591,6 +594,7 @@ export default
 				this.$set('temp_.' + this.key_, error); // move error message to correct key
 
 				this.errors[this.root_].$set(this.arrayIndex_, this.temp_); // merge placeholder with this.errors
+				this.errors = JSON.parse(JSON.stringify(this.errors)); // use this technique for reactivity
 			}
 		},
 
@@ -610,6 +614,40 @@ export default
 					// store the contents of the placeholder, replacing only the necessary data
 					this.errors[this.root_][this.arrayIndex_][key] = this.temp_[key];
 				}
+
+				this.errors = JSON.parse(JSON.stringify(this.errors)); // use this technique for reactivity
+			}
+		},
+
+
+		/**
+		 * Get rid of any previously existing error checking logic
+		 */
+		resetErrorChecking()
+		{
+			this.vars_ = {};
+			this.errors = {};
+			this.errMsg_ = {};
+
+			for (var key in this.watching_) {
+				// stop watching all registered variables
+				this.watching_[key].call();
+			}
+
+			this.watching_ = {};
+		},
+
+
+		/**
+		 * Clear out (but maintain the structure of) this.errors
+		 */
+		clearErrors(key = null)
+		{
+			for (var key in this.errors) {
+				if (typeof this.errors[key] === 'string') {
+					this.errors[key] = '';
+				}
+
 			}
 		},
 
