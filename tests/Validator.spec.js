@@ -14,29 +14,29 @@ describe("Validator", function() {
   });
   
     it('has a valid rules object', function () {
-        expect(typeof vm.validRules_).toBe('object');
+        expect(typeof vm.validator_.validRules).toBe('object');
     });
 
     it('has a rules object which contains functions', function () {
-      for (var rule in vm.validRules_) {
-        expect(typeof vm.validRules_[rule]).toBe('function');
+      for (var rule in vm.validator_.validRules) {
+        expect(typeof vm.validator_.validRules[rule]).toBe('function');
       }
     });
 
     it('has a "required" rule that makes sure a variable is not empty', function() {
-      vm.value_ = '';
+      vm.validator_.value = '';
       expect(vm.required_()).toBeFalsy();
 
-      vm.value_ = 1;
+      vm.validator_.value = 1;
       expect(vm.required_()).toBeTruthy();
 
-      vm.value_ = 'test';
+      vm.validator_.value = 'test';
       expect(vm.required_()).toBeTruthy();
 
-      vm.value_ = true;
+      vm.validator_.value = true;
       expect(vm.required_()).toBeTruthy();
 
-      vm.value_ = null;
+      vm.validator_.value = null;
       expect(vm.required_).toThrow();
     });
 
@@ -44,16 +44,16 @@ describe("Validator", function() {
     it('has a "max" rule that returns true if a variable is less than or equal to a given number in size or length', function() {
       var arg = [10];
 
-      vm.value_ = '';
+      vm.validator_.value = '';
       expect(vm.max_(arg)).toBeTruthy();
 
-      vm.value_ = 9;
+      vm.validator_.value = 9;
       expect(vm.max_(arg)).toBeTruthy();
 
-      vm.value_ = 'testankljahsdf022r';
+      vm.validator_.value = 'testankljahsdf022r';
       expect(vm.max_(arg)).toBeFalsy();
 
-      vm.value_ = 9;
+      vm.validator_.value = 9;
       expect(vm.max_(arg)).toBeTruthy();
     });
 
@@ -61,25 +61,25 @@ describe("Validator", function() {
     it('has a "min" rule that returns true if a variable is greater than or equal to a given number in size or length', function() {
       var arg = [10];
 
-      vm.value_ = 'Boy, I sure do love tests';
+      vm.validator_.value = 'Boy, I sure do love tests';
       expect(vm.min_(arg)).toBeTruthy();
 
-      vm.value_ = 11;
+      vm.validator_.value = 11;
       expect(vm.min_(arg)).toBeTruthy();
 
-      vm.value_ = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+      vm.validator_.value = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
       expect(vm.min_(arg)).toBeTruthy();
 
-      vm.value_ = 10;
+      vm.validator_.value = 10;
       expect(vm.min_(arg)).toBeTruthy();
 
-      vm.value_ = 'fails';
+      vm.validator_.value = 'fails';
       expect(vm.min_(arg)).toBeFalsy();
 
-      vm.value_ = 9;
+      vm.validator_.value = 9;
       expect(vm.min_(arg)).toBeFalsy();
 
-      vm.value_ = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+      vm.validator_.value = [1, 2, 3, 4, 5, 6, 7, 8, 9];
       expect(vm.min_(arg)).toBeFalsy();
     });
 
@@ -87,42 +87,42 @@ describe("Validator", function() {
     it('has a "size" rule that returns true if a variable is equal to a given size in length or value', function () {
       var arg = [10];
 
-      vm.value_ = 'Ten chars!';
+      vm.validator_.value = 'Ten chars!';
       expect(vm.size_(arg)).toBeTruthy();
 
-      vm.value_ = 10;
+      vm.validator_.value = 10;
       expect(vm.size_(arg)).toBeTruthy();
 
-      vm.value_ = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+      vm.validator_.value = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
       expect(vm.size_(arg)).toBeTruthy();
 
-      vm.value_ = 'fails';
+      vm.validator_.value = 'fails';
       expect(vm.size_(arg)).toBeFalsy();
 
-      vm.value_ = 9;
+      vm.validator_.value = 9;
       expect(vm.size_(arg)).toBeFalsy();
 
-      vm.value_ = 11;
+      vm.validator_.value = 11;
       expect(vm.size_(arg)).toBeFalsy();
 
-      vm.value_ = [1, 2, 3];
+      vm.validator_.value = [1, 2, 3];
       expect(vm.size_(arg)).toBeFalsy();
     });
 
     it('has an "equals" rule that returns true if a variable is equal to a given argument', function () {
       var arg = [10];
 
-      vm.value_ = 10;
+      vm.validator_.value = 10;
       expect(vm.equals_(arg)).toBeTruthy();
 
-      vm.value_ = '10';
+      vm.validator_.value = '10';
       expect(vm.equals_(arg)).toBeTruthy();
 
       arg = ['test'];
-      vm.value_ = 'test';
+      vm.validator_.value = 'test';
       expect(vm.equals_(arg)).toBeTruthy();
 
-      vm.value_ = '';
+      vm.validator_.value = '';
       expect(vm.equals_(arg)).toBeFalsy();
     });
 
@@ -130,130 +130,130 @@ describe("Validator", function() {
     it('has an "in" rule that returns true if a variable is one of the given arguments', function () {
       var arg = [10, 'yep'];
 
-      vm.value_ = 10;
+      vm.validator_.value = 10;
       expect(vm.in_(arg)).toBeTruthy();
 
-      vm.value_ = 'yep';
+      vm.validator_.value = 'yep';
       expect(vm.in_(arg)).toBeTruthy();
 
-      vm.value_ = 11;
+      vm.validator_.value = 11;
       expect(vm.in_(arg)).toBeFalsy();
 
-      vm.value_ = '10';
+      vm.validator_.value = '10';
       expect(vm.in_(arg)).toBeFalsy();
 
-      vm.value_ = '';
+      vm.validator_.value = '';
       expect(vm.in_(arg)).toBeFalsy();
     });
 
 
     it('has an "email" rule that returns true if a variable is a valid email', function () {
-      vm.value_ = 'tester@rookiecard.com';
+      vm.validator_.value = 'tester@rookiecard.com';
       expect(vm.email_()).toBeTruthy();
 
-      vm.value_ = '';
+      vm.validator_.value = '';
       expect(vm.email_()).toBeTruthy();
 
-      vm.value_ = 'blah@gmail';
+      vm.validator_.value = 'blah@gmail';
       expect(vm.email_()).toBeFalsy();
 
-      vm.value_ = 10;
+      vm.validator_.value = 10;
       expect(vm.email_()).toBeFalsy();
     });
 
 
     it('has an "alpha_num" rule that returns true if a variable is comprised of only alphanumeric characters', function () {
-      vm.value_ = 'thebesttest';
+      vm.validator_.value = 'thebesttest';
       expect(vm.alphaNum_()).toBeTruthy();
 
-      vm.value_ = 't3stsArEC00l';
+      vm.validator_.value = 't3stsArEC00l';
       expect(vm.alphaNum_()).toBeTruthy();
 
-      vm.value_ = 10;
+      vm.validator_.value = 10;
       expect(vm.alphaNum_()).toBeFalsy();
 
-      vm.value_ = 'd@ntheman!';
+      vm.validator_.value = 'd@ntheman!';
       expect(vm.alphaNum_()).toBeFalsy();
     });
 
 
     it('has an "alpha_dash" rule that returns true if a variable is comprised of only alphanumeric characters and dashes + underscores', function () {
-        vm.value_ = 'thebes_ttest';
+        vm.validator_.value = 'thebes_ttest';
         expect(vm.alphaDash_()).toBeTruthy();
 
-        vm.value_ = 't3sts-ArE-C00l';
+        vm.validator_.value = 't3sts-ArE-C00l';
         expect(vm.alphaDash_()).toBeTruthy();
 
-        vm.value_ = 10;
+        vm.validator_.value = 10;
         expect(vm.alphaDash_()).toBeFalsy();
 
-        vm.value_ = 'd@n_theman!';
+        vm.validator_.value = 'd@n_theman!';
         expect(vm.alphaDash_()).toBeFalsy();
     });
 
 
     it('has a "boolean" rule that returns true if a variable is a boolean', function () {
-      vm.value_ = true;
+      vm.validator_.value = true;
       expect(vm.boolean_()).toBeTruthy();
 
-      vm.value_ = false;
+      vm.validator_.value = false;
       expect(vm.boolean_()).toBeTruthy();
 
-      vm.value_ = 10;
+      vm.validator_.value = 10;
       expect(vm.boolean_()).toBeFalsy();
 
-      vm.value_ = 'test';
+      vm.validator_.value = 'test';
       expect(vm.boolean_()).toBeFalsy();
     });
 
 
     it('has an "array" rule that returns true if a variable is an array', function () {
-      vm.value_ = [];
+      vm.validator_.value = [];
       expect(vm.array_()).toBeTruthy();
 
-      vm.value_ = [1, 2, 3];
+      vm.validator_.value = [1, 2, 3];
       expect(vm.array_()).toBeTruthy();
 
-      vm.value_ = 10;
+      vm.validator_.value = 10;
       expect(vm.array_()).toBeFalsy();
 
-      vm.value_ = 'test';
+      vm.validator_.value = 'test';
       expect(vm.array_()).toBeFalsy();
     });
 
 
     it('has a "string" rule that returns true if a variable is a string', function () {
-      vm.value_ = 'test';
+      vm.validator_.value = 'test';
       expect(vm.string_()).toBeTruthy();
 
-      vm.value_ = '';
+      vm.validator_.value = '';
       expect(vm.string_()).toBeTruthy();
 
-      vm.value_ = 10;
+      vm.validator_.value = 10;
       expect(vm.string_()).toBeFalsy();
 
-      vm.value_ = [];
+      vm.validator_.value = [];
       expect(vm.string_()).toBeFalsy();
 
-      vm.value_ = false;
+      vm.validator_.value = false;
       expect(vm.string_()).toBeFalsy();
     });
 
 
     it('has a "number" rule that returns true if a variable is a number', function () {
-      vm.value_ = 10;
+      vm.validator_.value = 10;
       expect(vm.number_()).toBeTruthy();
 
-      vm.value_ = 2484.242;
+      vm.validator_.value = 2484.242;
       expect(vm.number_()).toBeTruthy();
 
-      vm.value_ = [];
+      vm.validator_.value = [];
       expect(vm.number_()).toBeFalsy();
 
-      vm.value_ = false;
+      vm.validator_.value = false;
       expect(vm.number_()).toBeFalsy();
 
-      vm.value_ = 'test';
+      vm.validator_.value = 'test';
       expect(vm.number_()).toBeFalsy();
     });
 
@@ -265,37 +265,37 @@ describe("Validator", function() {
       // argument as string in an array (how the argument looks if you used the regex rule specifically)
       var args = ['^[0-9]+$'];
 
-      vm.value_ = '123';
+      vm.validator_.value = '123';
       expect(vm.regex_(args)).toBeTruthy();
 
-      vm.value_ = 'testing 123';
+      vm.validator_.value = 'testing 123';
       expect(vm.regex_(args)).toBeFalsy();
 
-      vm.value_ = 10;
+      vm.validator_.value = 10;
       expect(vm.regex_(args)).toBeFalsy();
 
     // same as above but developer also included forward-slashes at beginning and end
       args = ['/^[0-9]+$/'];
 
-      vm.value_ = '123';
+      vm.validator_.value = '123';
       expect(vm.regex_(args)).toBeTruthy();
 
-      vm.value_ = 'testing 123';
+      vm.validator_.value = 'testing 123';
       expect(vm.regex_(args)).toBeFalsy();
 
-      vm.value_ = 10;
+      vm.validator_.value = 10;
       expect(vm.regex_(args)).toBeFalsy();
 
       // as a plain expression (how the argument looks if called by another rule such as 'email')
       args = /^[0-9]+$/;
 
-      vm.value_ = '123';
+      vm.validator_.value = '123';
       expect(vm.regex_(args)).toBeTruthy();
 
-      vm.value_ = 'testing 123';
+      vm.validator_.value = 'testing 123';
       expect(vm.regex_(args)).toBeFalsy();
 
-      vm.value_ = 10;
+      vm.validator_.value = 10;
       expect(vm.regex_(args)).toBeFalsy();
     });
 
@@ -322,13 +322,13 @@ describe("Validator", function() {
       expect(vm.errors.teamname).toEqual(''); // error message empty until an errorCheck() is run
 
       // store possible error messages for each rule
-      expect(vm.errMsg_.teamname.required).toEqual('Enter a teamname');
-      expect(vm.errMsg_.teamname.alpha_num).toEqual('Only letters and numbers');
+      expect(vm.validator_.errMsg.teamname.required).toEqual('Enter a teamname');
+      expect(vm.validator_.errMsg.teamname.alpha_num).toEqual('Only letters and numbers');
 
       // store meta data about the variable
-      expect(vm.vars_.teamname.keys[0]).toEqual('');
-      expect(vm.vars_.teamname.isArray).toBeFalsy();
-      expect(vm.vars_.teamname.rules[0]).toEqual({
+      expect(vm.validator_.vars.teamname.keys[0]).toEqual('');
+      expect(vm.validator_.vars.teamname.isArray).toBeFalsy();
+      expect(vm.validator_.vars.teamname.rules[0]).toEqual({
         required: [],
         alpha_num: [],
       });
@@ -345,12 +345,12 @@ describe("Validator", function() {
 
       expect(vm.errors.location.city.zip).toEqual('');
 
-      expect(vm.errMsg_.location.city.zip.required).toEqual('Enter a zip');
-      expect(vm.errMsg_.location.city.zip.size).toEqual('Invalid zip');
+      expect(vm.validator_.errMsg.location.city.zip.required).toEqual('Enter a zip');
+      expect(vm.validator_.errMsg.location.city.zip.size).toEqual('Invalid zip');
 
-      expect(vm.vars_.location.keys[0]).toEqual('city.zip');
-      expect(vm.vars_.location.isArray).toBeFalsy();
-      expect(vm.vars_.location.rules[0]).toEqual({
+      expect(vm.validator_.vars.location.keys[0]).toEqual('city.zip');
+      expect(vm.validator_.vars.location.isArray).toBeFalsy();
+      expect(vm.validator_.vars.location.rules[0]).toEqual({
         required: [],
         size: [5],
         number: [],
@@ -369,20 +369,20 @@ describe("Validator", function() {
       expect(vm.errors.location.city.zip).toEqual('');
       expect(vm.errors.location.city.name).toEqual('');
 
-      expect(vm.errMsg_.location.city.zip.required).toEqual('Enter a zip');
-      expect(vm.errMsg_.location.city.zip.size).toEqual('Invalid zip');
-      expect(vm.errMsg_.location.city.name.required).toEqual('Enter your city');
+      expect(vm.validator_.errMsg.location.city.zip.required).toEqual('Enter a zip');
+      expect(vm.validator_.errMsg.location.city.zip.size).toEqual('Invalid zip');
+      expect(vm.validator_.errMsg.location.city.name.required).toEqual('Enter your city');
 
-      expect(vm.vars_.location.keys[0]).toEqual('city.zip');
-      expect(vm.vars_.location.isArray).toBeFalsy();
-      expect(vm.vars_.location.rules[0]).toEqual({
+      expect(vm.validator_.vars.location.keys[0]).toEqual('city.zip');
+      expect(vm.validator_.vars.location.isArray).toBeFalsy();
+      expect(vm.validator_.vars.location.rules[0]).toEqual({
         required: [],
         size: [5],
         number: [],
       });
-      expect(vm.vars_.location.keys[1]).toEqual('city.name');
-      expect(vm.vars_.location.isArray).toBeFalsy();
-      expect(vm.vars_.location.rules[1]).toEqual({
+      expect(vm.validator_.vars.location.keys[1]).toEqual('city.name');
+      expect(vm.validator_.vars.location.isArray).toBeFalsy();
+      expect(vm.validator_.vars.location.rules[1]).toEqual({
         required: [],
       });
     });
@@ -402,17 +402,17 @@ describe("Validator", function() {
       expect(vm.errors.players[0].name.firstname).toEqual('');
       expect(vm.errors.players[1].name.firstname).toEqual('');
 
-      expect(vm.errMsg_.players.email.email).toEqual('Invalid email');
-      expect(vm.errMsg_.players.name.firstname.required).toEqual('Name this player');
+      expect(vm.validator_.errMsg.players.email.email).toEqual('Invalid email');
+      expect(vm.validator_.errMsg.players.name.firstname.required).toEqual('Name this player');
 
-      expect(vm.vars_.players.keys[0]).toEqual('email');
-      expect(vm.vars_.players.isArray).toBeTruthy();
-      expect(vm.vars_.players.rules[0]).toEqual({
+      expect(vm.validator_.vars.players.keys[0]).toEqual('email');
+      expect(vm.validator_.vars.players.isArray).toBeTruthy();
+      expect(vm.validator_.vars.players.rules[0]).toEqual({
         email: [],
       });
-      expect(vm.vars_.players.keys[1]).toEqual('name.firstname');
-      expect(vm.vars_.players.isArray).toBeTruthy();
-      expect(vm.vars_.players.rules[1]).toEqual({
+      expect(vm.validator_.vars.players.keys[1]).toEqual('name.firstname');
+      expect(vm.validator_.vars.players.isArray).toBeTruthy();
+      expect(vm.validator_.vars.players.rules[1]).toEqual({
         required: [],
       });
     });
@@ -424,9 +424,9 @@ describe("Validator", function() {
       vm.registerErrorChecking('teamname', 'required|alpha_num|max:18', ['Invalid teamname']);
 
       // same error message used for all rules
-      expect(vm.errMsg_.teamname.required).toEqual('Invalid teamname');
-      expect(vm.errMsg_.teamname.alpha_num).toEqual('Invalid teamname');
-      expect(vm.errMsg_.teamname.max).toEqual('Invalid teamname');
+      expect(vm.validator_.errMsg.teamname.required).toEqual('Invalid teamname');
+      expect(vm.validator_.errMsg.teamname.alpha_num).toEqual('Invalid teamname');
+      expect(vm.validator_.errMsg.teamname.max).toEqual('Invalid teamname');
     });
 
 
@@ -436,9 +436,9 @@ describe("Validator", function() {
       vm.registerErrorChecking('teamname', 'required|alpha_num|max:18');
 
       // same error message used for all rules
-      expect(vm.errMsg_.teamname.required).toEqual('Invalid input');
-      expect(vm.errMsg_.teamname.alpha_num).toEqual('Invalid input');
-      expect(vm.errMsg_.teamname.max).toEqual('Invalid input');
+      expect(vm.validator_.errMsg.teamname.required).toEqual('Invalid input');
+      expect(vm.validator_.errMsg.teamname.alpha_num).toEqual('Invalid input');
+      expect(vm.validator_.errMsg.teamname.max).toEqual('Invalid input');
     });
 
 
@@ -691,8 +691,8 @@ describe("Validator", function() {
         vm.resetErrorChecking();
 
         expect(vm.errors.length).toBeUndefined();
-        expect(vm.vars_.length).toBeUndefined();
-        expect(vm.errMsg_.length).toBeUndefined();
+        expect(vm.validator_.vars.length).toBeUndefined();
+        expect(vm.validator_.errMsg.length).toBeUndefined();
     });
 
 

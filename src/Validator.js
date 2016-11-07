@@ -1,5 +1,7 @@
 /**
  * Validator mixin inspired by Laravel's Validator API
+ *
+ * https://github.com/dargue3/laravel-like-vue-validator
  */
 export default
 {
@@ -7,35 +9,38 @@ export default
 	{
 		return {
 			errors: {},
-			vars_: {},
-			errMsg_: {},
-			watching_: {},
-			validRules_: {
-				required: 	function(args) { return this.required_(args) },	// the field needs to have something in it
-				max: 				function(args) { return this.max_(args) }, 		// the field must be less than a given argument in length or size
-				min: 				function(args) { return this.min_(args) }, 		// the field must be greater than a given argument in length or size
-				size: 			function(args) { return this.size_(args) }, 	// the field must be of a given size in length or value
-				equals: 		function(args) { return this.equals_(args) }, 	// the field must equal to a given value
-				in: 				function(args) { return this.in_(args) }, 		// the field must equal one of the given arguments
-				boolean: 		function(args) { return this.boolean_(args) },  // the field must be a boolean
-				string: 		function(args) { return this.string_(args) },  	// the field must be a string
-				number: 		function(args) { return this.number_(args) },  	// the field must be a number
-				array: 			function(args) { return this.array_(args) },  	// the field must be an array
-				regex: 			function(args) { return this.regex_(args) },  	// the field must be a string that matches a given regular expression. BE CAREFUL, DON'T INCLUDE PIPES! 
-				alpha_num: 	function(args) { return this.alphaNum_(args) },  // the field must be a string with only alphanumeric characters
-				alpha_dash: function(args) { return this.alphaDash_(args) },  // the field must be a string with only alphanumeric characters and dashes + underscores
-				email: 			function(args) { return this.email_(args) }, 	// the field must be a valid email
-			},
-			value_: null, 			// the value of the variable in question
-			path_: null, 			// the full path of the variable (e.g. user.name.firstname)
-			root_: null, 			// the name of the root of the variable (e.g. user)
-			key_: null,				// string of keys off of the root variable that make up the full path
-			rules_: null, 			// the rules applied to this variable
-			messages_: null, 		// the error messages to set
-			count_: null,			// the index into the array counter
-			isArray_: null,			// whether or not the given variable is an array
-			arrayIndex_: null,		// which index of the given array to error check
-			temp_: {}, 				// temporary useless variable to utilize $set functionality
+			validator_: {
+				vars: {},
+				errMsg: {},
+				watching: {},
+				validRules: {
+					required: 	function(args) { return this.required_(args) },	// the field needs to have something in it
+					max: 				function(args) { return this.max_(args) }, 		// the field must be less than a given argument in length or size
+					min: 				function(args) { return this.min_(args) }, 		// the field must be greater than a given argument in length or size
+					size: 			function(args) { return this.size_(args) }, 	// the field must be of a given size in length or value
+					equals: 		function(args) { return this.equals_(args) }, 	// the field must equal to a given value
+					in: 				function(args) { return this.in_(args) }, 		// the field must equal one of the given arguments
+					boolean: 		function(args) { return this.boolean_(args) },  // the field must be a boolean
+					string: 		function(args) { return this.string_(args) },  	// the field must be a string
+					number: 		function(args) { return this.number_(args) },  	// the field must be a number
+					array: 			function(args) { return this.array_(args) },  	// the field must be an array
+					regex: 			function(args) { return this.regex_(args) },  	// the field must be a string that matches a given regular expression. BE CAREFUL, DON'T INCLUDE PIPES! 
+					alpha_num: 	function(args) { return this.alphaNum_(args) },  // the field must be a string with only alphanumeric characters
+					alpha_dash: function(args) { return this.alphaDash_(args) },  // the field must be a string with only alphanumeric characters and dashes + underscores
+					email: 			function(args) { return this.email_(args) }, 	// the field must be a valid email
+					jersey: 		function(args) { return this.jersey_(args) }, 	// the field must be a valid jersey number
+				},
+				value: null, 			// the value of the variable in question
+				path: null, 			// the full path of the variable (e.g. user.name.firstname)
+				root: null, 			// the name of the root of the variable (e.g. user)
+				key: null,				// string of keys off of the root variable that make up the full path
+				rules: null, 			// the rules applied to this variable
+				messages: null, 		// the error messages to set
+				count: null,			// the index into the array counter
+				isArray: null,			// whether or not the given variable is an array
+				arrayIndex: null,		// which index of the given array to error check
+				temp: {}, 				// temporary useless variable to utilize $set functionality
+			}
 		}
 	},
 
@@ -52,13 +57,13 @@ export default
 		 */
 		registerErrorChecking(variable, rules, messages = [], watch = true)
 		{
-			this.path_ = variable;
-			this.root_ = variable;
-			this.rules_ = rules;
-			this.messages_ = messages;
-			this.count_ = 0;
-			this.isArray_ = false;
-			this.key_ = '';
+			this.validator_.path = variable;
+			this.validator_.root = variable;
+			this.validator_.rules = rules;
+			this.validator_.messages = messages;
+			this.validator_.count = 0;
+			this.validator_.isArray = false;
+			this.validator_.key = '';
 
 			// variable could have various indices beyond just the root
 			// split into an array for ease
@@ -66,33 +71,33 @@ export default
 
 			if (variable.length > 1) {
 
-				this.root_ = variable[0];
+				this.validator_.root = variable[0];
 
 				if (variable[1] === '*') {
 					// dealing with an array
-					this.isArray_ = true;
-					this.path_ = this.root_;
-					this.key_ = ''
+					this.validator_.isArray = true;
+					this.validator_.path = this.validator_.root;
+					this.validator_.key = ''
 
 					if (variable.length > 2) {
 						// variable looks like 'players.*.name.firstname', save those extra keys
-						this.key_ = variable.slice(2).join('.');
-						this.path_ = this.root_ + '.' + this.key_;
+						this.validator_.key = variable.slice(2).join('.');
+						this.validator_.path = this.validator_.root + '.' + this.validator_.key;
 					}
 				}
 				else {
 					// variable looks like 'player.name'
-					this.key_ = variable.slice(1).join('.');
-					this.path_ = this.root_ + '.' + this.key_;
+					this.validator_.key = variable.slice(1).join('.');
+					this.validator_.path = this.validator_.root + '.' + this.validator_.key;
 				}
 			}
 
 			this.register_();
 
-			if (watch && ! this.isArray_) {
+			if (watch && ! this.validator_.isArray) {
 				// whenever this variable changes, re-run the error check
-				var path = this.path_;
-				this.watching_[path] = this.$watch(path, function() { this.errorCheck(path); });
+				var path = this.validator_.path;
+				this.validator_.watching[path] = this.$watch(path, function() { this.errorCheck(path); });
 			}
 		},
 
@@ -104,12 +109,12 @@ export default
 		 */
 		register_()
 		{
-			if (typeof this.vars_[this.root_] === 'undefined') {
+			if (typeof this.validator_.vars[this.validator_.root] === 'undefined') {
 				// new entry
-				this.$set('vars_.' + this.root_, {
+				this.$set('validator_.vars.' + this.validator_.root, {
 					rules: [this.addRules()],
-					isArray: this.isArray_,
-					keys: [this.key_]
+					isArray: this.validator_.isArray,
+					keys: [this.validator_.key]
 				});
 			}
 			else {
@@ -117,13 +122,13 @@ export default
 				if (this.checkForConflicts()) {
 					return;
 				}
-				this.vars_[this.root_].rules.push(this.addRules());
-				this.vars_[this.root_].keys.push(this.key_);
+				this.validator_.vars[this.validator_.root].rules.push(this.addRules());
+				this.validator_.vars[this.validator_.root].keys.push(this.validator_.key);
 			}
 
-			if (! this.isArray_) {
+			if (! this.validator_.isArray) {
 				// initialize errors to an empty string
-				this.$set('errors.' + this.path_, '');
+				this.$set('errors.' + this.validator_.path, '');
 			}
 			else {
 				// initialize errors to array of empty strings
@@ -139,26 +144,26 @@ export default
 		 */
 		initializeErrorArray()
 		{
-			this.value_ = this.$get(this.root_);
+			this.validator_.value = this.$get(this.validator_.root);
 
-			if (typeof this.errors[this.root_] === 'undefined') {
-				this.errors[this.root_] = [];
+			if (typeof this.errors[this.validator_.root] === 'undefined') {
+				this.errors[this.validator_.root] = [];
 			}
 
-			this.temp_ = {};
-			this.$set('temp_.' + this.key_, ''); // build a placeholder to insert
+			this.validator_.temp = {};
+			this.$set('validator_.temp.' + this.validator_.key, ''); // build a placeholder to insert
 
 			// create an error message for each index
 			// like: errors.players[x].name.firstname
-			for (var x = 0; x < this.value_.length; x++) {
-				if (typeof this.errors[this.root_][x] === 'undefined') {
+			for (var x = 0; x < this.validator_.value.length; x++) {
+				if (typeof this.errors[this.validator_.root][x] === 'undefined') {
 					// new entry
-					this.errors[this.root_].$set(x, this.temp_);
+					this.errors[this.validator_.root].$set(x, this.validator_.temp);
 				}
 				else {
 					// copy over existing content and the new 
-					for (var key in this.temp_) {
-						this.errors[this.root_][x][key] = this.temp_[key];
+					for (var key in this.validator_.temp) {
+						this.errors[this.validator_.root][x][key] = this.validator_.temp[key];
 					}
 				}
 			}
@@ -174,19 +179,19 @@ export default
 		addRules()
 		{
 			var rules = {};
-			this.rules_ = this.rules_.split('|');
+			this.validator_.rules = this.validator_.rules.split('|');
 
-			for (var rule in this.rules_) {
+			for (var rule in this.validator_.rules) {
 				// split rule and arguments apart (like: ['in', 'dog,cat,mouse'])
-				var splitRule = this.rules_[rule].split(':');
+				var splitRule = this.validator_.rules[rule].split(':');
 				rule = splitRule[0]; // save the rule (like: 'in');
 
 				this.validateRule(rule);
 
 				// save the error message for this rule
 				var msg = this.getErrorMessage();
-				this.$set('errMsg_.' + this.path_ + '.' + rule, msg);
-				this.count_++;
+				this.$set('validator_.errMsg.' + this.validator_.path + '.' + rule, msg);
+				this.validator_.count++;
  
 				if (splitRule.length > 1) {
 					rules[rule] = this.formatArguments(splitRule);
@@ -208,20 +213,20 @@ export default
 		 */
 		getErrorMessage()
 		{
-			if (! this.messages_.length) {
+			if (! this.validator_.messages.length) {
 				return "Invalid input"
 			}
 
-			if (typeof this.messages_ === 'string') {
-				return this.messages_;
+			if (typeof this.validator_.messages === 'string') {
+				return this.validator_.messages;
 			}
 
-			if (this.count_ >= this.messages_.length) {
+			if (this.validator_.count >= this.validator_.messages.length) {
 				// use the last given one, it probably applies for both
-				return this.messages_[this.messages_.length - 1];
+				return this.validator_.messages[this.validator_.messages.length - 1];
 			}
 
-			return this.messages_[this.count_];
+			return this.validator_.messages[this.validator_.count];
 		},
 
 
@@ -259,9 +264,9 @@ export default
 		 */
 		validateRule(rule)
 		{
-			if(! (rule in this.validRules_)) {
+			if(! (rule in this.validator_.validRules)) {
 				if (rule === '') {
-					throw "There is a trailing '|' or duplicate '||' in the rules for " + this.path_;
+					throw "There is a trailing '|' or duplicate '||' in the rules for " + this.validator_.path;
 				}
 				else {
 					throw "'" + rule + "' is not a valid rule";
@@ -278,12 +283,12 @@ export default
 		 */
 		checkForConflicts()
 		{
-			if (this.isArray_ && ! this.vars_[this.root_].isArray) {
-				throw "'" + this.path_ + "' was not previously registered as an array"
+			if (this.validator_.isArray && ! this.validator_.vars[this.validator_.root].isArray) {
+				throw "'" + this.validator_.path + "' was not previously registered as an array"
 				return true;
 			}
-			else if (! this.isArray_ && this.vars_[this.root_].isArray) {
-				throw "'" + this.path_ + "' was already saved for error checking as an array"
+			else if (! this.validator_.isArray && this.validator_.vars[this.validator_.root].isArray) {
+				throw "'" + this.validator_.path + "' was already saved for error checking as an array"
 				return true;
 			}
 
@@ -300,9 +305,9 @@ export default
 		 */
 		manualErrorChecking(variable, msg = '')
 		{
-			this.root_ = variable.split('.')[0];
-			if (typeof this.vars_[this.root_] !== 'undefined') {
-				throw "Automatic error checking on '" + this.root_ + "' has been registered already"
+			this.validator_.root = variable.split('.')[0];
+			if (typeof this.validator_.vars[this.validator_.root] !== 'undefined') {
+				throw "Automatic error checking on '" + this.validator_.root + "' has been registered already"
 				return;
 			}
 
@@ -322,7 +327,7 @@ export default
 			
 			if (variable === null) {
 				// check all
-				for (variable in this.vars_) {
+				for (variable in this.validator_.vars) {
 					errors += this.errorCheckSpecific(variable);
 				}
 			}
@@ -344,25 +349,25 @@ export default
 		{
 			// split into an array
 			variable = variable.split('.');
-			this.root_ = variable[0];
+			this.validator_.root = variable[0];
 
 			if (! this.checkRootWasRegistered()) {
 				return 1;
 			}
 
-			if (this.vars_[this.root_].isArray) {
+			if (this.validator_.vars[this.validator_.root].isArray) {
 				return this.errorCheckArray_(variable)
 			}
 			else {
-				this.arrayIndex_ = null;
+				this.validator_.arrayIndex = null;
 			}
 
 			if (variable.length > 1) {
-				this.key_ = variable.splice(1).join('.');
-				return this.checkSpecificKey_(this.key_);
+				this.validator_.key = variable.splice(1).join('.');
+				return this.checkSpecificKey_(this.validator_.key);
 			}
 			else {
-				this.key_ = '';
+				this.validator_.key = '';
 				return this.checkAllKeys_();
 			}
 		},
@@ -377,9 +382,9 @@ export default
 		 */
 		errorCheckArray_(variable)
 		{
-			this.value_ = this.$get(this.root_);
+			this.validator_.value = this.$get(this.validator_.root);
 
-			if (! this.value_.length) {
+			if (! this.validator_.value.length) {
 				// there are no values, no errors
 				return 0;
 			}
@@ -392,7 +397,7 @@ export default
 
 				// is it something like players.1.email?
 				if (parseInt(variable[1])) {
-					this.arrayIndex_ = parseInt(variable[1]);
+					this.validator_.arrayIndex = parseInt(variable[1]);
 					var key = variable.slice(2).join('.');
 					if (! key.length) {
 						// check all keys at this index
@@ -423,23 +428,23 @@ export default
 		checkSpecificKey_(key)
 		{
 			// convert key string to an index into keys array for this variable
-			this.key_ = key;
-			key = this.vars_[this.root_].keys.indexOf(key)
+			this.validator_.key = key;
+			key = this.validator_.vars[this.validator_.root].keys.indexOf(key)
 			if (key === -1) {
-				throw "'" + this.key_ +  "' in '" + this.root_ + "' was never registered";
+				throw "'" + this.validator_.key +  "' in '" + this.validator_.root + "' was never registered";
 				return 1;
 			}
 
 			// build path to this variable
-			if (this.vars_[this.root_].keys[key].length) {
-				this.path_ = this.root_ + '.' + this.vars_[this.root_].keys[key];
+			if (this.validator_.vars[this.validator_.root].keys[key].length) {
+				this.validator_.path = this.validator_.root + '.' + this.validator_.vars[this.validator_.root].keys[key];
 			}
 			else {
-				this.path_ = this.root_;
+				this.validator_.path = this.validator_.root;
 			}
 
 			// return the result of error checking
-			return this.runErrorCheckOnRules_(this.vars_[this.root_].rules[key]);
+			return this.runErrorCheckOnRules_(this.validator_.vars[this.validator_.root].rules[key]);
 		},
 
 
@@ -452,10 +457,10 @@ export default
 		checkWholeArray_(key = null)
 		{
 			var errors = 0;
-			var currentVal = this.value_;
+			var currentVal = this.validator_.value;
 
 			// loop through every entry in the array variable
-			for (this.arrayIndex_ = 0; this.arrayIndex_ < currentVal.length; this.arrayIndex_++) {
+			for (this.validator_.arrayIndex = 0; this.validator_.arrayIndex < currentVal.length; this.validator_.arrayIndex++) {
 				if (! key) {
 					// no given key, check them all
 					errors += this.checkAllKeys_();
@@ -479,9 +484,9 @@ export default
 		checkAllKeys_()
 		{
 			var errors = 0;
-			for (var key in this.vars_[this.root_].keys) {
+			for (var key in this.validator_.vars[this.validator_.root].keys) {
 				// run a set of rules and save outcome
-				errors += this.checkSpecificKey_(this.vars_[this.root_].keys[key]);
+				errors += this.checkSpecificKey_(this.validator_.vars[this.validator_.root].keys[key]);
 			}
 
 			return errors;
@@ -498,16 +503,16 @@ export default
 			var errors = 0;
 
 			// save the value
-			if (this.arrayIndex_ === null) {
-				this.value_ = this.$get(this.path_);
+			if (this.validator_.arrayIndex === null) {
+				this.validator_.value = this.$get(this.validator_.path);
 			}
 			else {
-				this.value_ = this.fetchValueOfArray();
+				this.validator_.value = this.fetchValueOfArray();
 			}
 
 			for (var rule in rules) {
 				var args = rules[rule];
-				if (! this.validRules_[rule].call(this, args)) {
+				if (! this.validator_.validRules[rule].call(this, args)) {
 					errors++;
 					this.setError_(rule);
 					break; // no sense in continuing if it has failed a check already
@@ -527,10 +532,10 @@ export default
 		 */
 		fetchValueOfArray(key)
 		{
-			if (this.key_.length) {
-				var splitKeys = this.key_.split('.'); // split 'name.firstname' into ['name', 'firstname'];
-				this.path_ = this.root_ + '.' + this.key_;
-				var value = this.$get(this.root_)[this.arrayIndex_]; // fetch the object at this array index
+			if (this.validator_.key.length) {
+				var splitKeys = this.validator_.key.split('.'); // split 'name.firstname' into ['name', 'firstname'];
+				this.validator_.path = this.validator_.root + '.' + this.validator_.key;
+				var value = this.$get(this.validator_.root)[this.validator_.arrayIndex]; // fetch the object at this array index
 
 				for (var x = 0; x < splitKeys.length; x++) {
 					// loop through indexing into the proper object
@@ -538,8 +543,8 @@ export default
 				}
 			}
 			else {
-				var value = this.$get(this.root_)[this.arrayIndex_];
-				this.path_ = this.root_;
+				var value = this.$get(this.validator_.root)[this.validator_.arrayIndex];
+				this.validator_.path = this.validator_.root;
 			}
 
 			return value;
@@ -551,8 +556,8 @@ export default
 		 */
 		checkRootWasRegistered()
 		{
-			if (! (this.root_ in this.vars_)) {
-				throw "'" + this.root_ + "' was never registered for error checking";
+			if (! (this.validator_.root in this.validator_.vars)) {
+				throw "'" + this.validator_.root + "' was never registered for error checking";
 				return false;
 			}
 
@@ -565,13 +570,13 @@ export default
 		 */
 		resetErrorsArraySize_()
 		{
-			if (this.errors[this.root_].length !== this.value_.length) {
+			if (this.errors[this.validator_.root].length !== this.validator_.value.length) {
 				var temp = [];
-				var copy = this.errors[this.root_][0];
-				for (var index = 0; index < this.value_.length; index++) {
+				var copy = this.errors[this.validator_.root][0];
+				for (var index = 0; index < this.validator_.value.length; index++) {
 					temp.push(copy);
 				}
-				this.errors[this.root_] = temp;
+				this.errors[this.validator_.root] = temp;
 			}
 		},
 
@@ -583,16 +588,16 @@ export default
 		 */
 		setError_(rule)
 		{
-			if (this.arrayIndex_ === null) {
-				var error = this.$get('errMsg_.' + this.path_ + '.' + rule); // fetch error message 
-				this.$set('errors.' + this.path_, error); // store
+			if (this.validator_.arrayIndex === null) {
+				var error = this.$get('validator_.errMsg.' + this.validator_.path + '.' + rule); // fetch error message 
+				this.$set('errors.' + this.validator_.path, error); // store
 			}
 			else {
-				var error = this.$get('errMsg_.' + this.path_ + '.' + rule); // fetch error message
-				this.$set('temp_', JSON.parse(JSON.stringify(this.errors[this.root_][this.arrayIndex_]))); // create copy
-				this.$set('temp_.' + this.key_, error); // move error message to correct key
+				var error = this.$get('validator_.errMsg.' + this.validator_.path + '.' + rule); // fetch error message
+				this.$set('validator_.temp', JSON.parse(JSON.stringify(this.errors[this.validator_.root][this.validator_.arrayIndex]))); // create copy
+				this.$set('validator_.temp.' + this.validator_.key, error); // move error message to correct key
 
-				this.errors[this.root_].$set(this.arrayIndex_, this.temp_); // merge placeholder with this.errors
+				this.errors[this.validator_.root].$set(this.validator_.arrayIndex, this.validator_.temp); // merge placeholder with this.errors
 				this.errors = JSON.parse(JSON.stringify(this.errors)); // use this technique for reactivity
 			}
 		},
@@ -603,15 +608,15 @@ export default
 		 */
 		clearError_()
 		{
-			if (this.arrayIndex_ === null) { 
-				this.$set('errors.' + this.path_, '');
+			if (this.validator_.arrayIndex === null) { 
+				this.$set('errors.' + this.validator_.path, '');
 			}
 			else {
-				this.temp_ = {};
-				this.$set('temp_.' + this.key_, ''); // create placeholder
-				for (var key in this.temp_) {
+				this.validator_.temp = {};
+				this.$set('validator_.temp.' + this.validator_.key, ''); // create placeholder
+				for (var key in this.validator_.temp) {
 					// store the contents of the placeholder, replacing only the necessary data
-					this.errors[this.root_][this.arrayIndex_][key] = this.temp_[key];
+					this.errors[this.validator_.root][this.validator_.arrayIndex][key] = this.validator_.temp[key];
 				}
 
 				this.errors = JSON.parse(JSON.stringify(this.errors)); // use this technique for reactivity
@@ -624,16 +629,16 @@ export default
 		 */
 		resetErrorChecking()
 		{
-			this.vars_ = {};
+			this.validator_.vars = {};
 			this.errors = {};
-			this.errMsg_ = {};
+			this.validator_.errMsg = {};
 
-			for (var key in this.watching_) {
+			for (var key in this.validator_.watching) {
 				// stop watching all registered variables
-				this.watching_[key].call();
+				this.validator_.watching[key].call();
 			}
 
-			this.watching_ = {};
+			this.validator_.watching = {};
 		},
 
 
@@ -658,7 +663,7 @@ export default
 		 */
 		uncertainInput(method)
 		{
-			throw "Having a hard time resolving '" + this.path_ + "' for rule '" + method + "'";
+			throw "Having a hard time resolving '" + this.validator_.path + "' for rule '" + method + "'";
 
 			return false;
 		},
@@ -669,20 +674,20 @@ export default
 		 */
 		required_()
 		{
-			if (typeof this.value_ === 'undefined') {
+			if (typeof this.validator_.value === 'undefined') {
 				return false;
 			}
 
-			if (typeof this.value_ === 'number') {
+			if (typeof this.validator_.value === 'number') {
 				return true;
 			} 
 
-			if (typeof this.value_ === 'boolean') {
+			if (typeof this.validator_.value === 'boolean') {
 				return true;
 			} 
 
-			if (typeof this.value_ === 'string') {
-				return this.value_.length > 0;
+			if (typeof this.validator_.value === 'string') {
+				return this.validator_.value.length > 0;
 			}
 
 			return this.uncertainInput('required');
@@ -693,16 +698,16 @@ export default
 		 */
 		max_(args)
 		{
-			if (typeof this.value_ === 'number') {
-				return this.value_ <= args[0];
+			if (typeof this.validator_.value === 'number') {
+				return this.validator_.value <= args[0];
 			}
 			
-			if (typeof this.value_ === 'string') {
-				return this.value_.length <= args[0];
+			if (typeof this.validator_.value === 'string') {
+				return this.validator_.value.length <= args[0];
 			}
 
-			if (typeof this.value_ === 'object') {
-				return this.value_.length <= args[0];
+			if (typeof this.validator_.value === 'object') {
+				return this.validator_.value.length <= args[0];
 			}
 
 			return this.uncertainInput('max');
@@ -714,16 +719,16 @@ export default
 		 */
 		min_(args)
 		{
-			if (typeof this.value_ === 'number') {
-				return this.value_ >= args[0];
+			if (typeof this.validator_.value === 'number') {
+				return this.validator_.value >= args[0];
 			}
 			
-			if (typeof this.value_ === 'string') {
-				return this.value_.length >= args[0];
+			if (typeof this.validator_.value === 'string') {
+				return this.validator_.value.length >= args[0];
 			}
 
-			if (typeof this.value_ === 'object') {
-				return this.value_.length >= args[0];
+			if (typeof this.validator_.value === 'object') {
+				return this.validator_.value.length >= args[0];
 			}
 
 			return this.uncertainInput('max');
@@ -735,7 +740,7 @@ export default
 		 */
 		in_(args)
 		{
-			if (args.indexOf(this.value_) === -1) {
+			if (args.indexOf(this.validator_.value) === -1) {
 				return false;
 			}
 
@@ -748,16 +753,16 @@ export default
 		 */
 		size_(args)
 		{
-			if (typeof this.value_ === 'number') {
-				return this.value_ === args[0];
+			if (typeof this.validator_.value === 'number') {
+				return this.validator_.value === args[0];
 			}
 			
-			if (typeof this.value_ === 'string') {
-				return this.value_.length === args[0];
+			if (typeof this.validator_.value === 'string') {
+				return this.validator_.value.length === args[0];
 			}
 
-			if (typeof this.value_ === 'object') {
-				return this.value_.length === args[0];
+			if (typeof this.validator_.value === 'object') {
+				return this.validator_.value.length === args[0];
 			}
 
 			return this.uncertainInput('size');
@@ -769,7 +774,7 @@ export default
 		 */
 		equals_(args)
 		{
-			return this.value_ == args[0];
+			return this.validator_.value == args[0];
 		},
 
 
@@ -778,12 +783,12 @@ export default
 		 */
 		regex_(expression)
 		{
-			if (typeof this.value_ !== 'string') {
+			if (typeof this.validator_.value !== 'string') {
 				// values that aren't strings shouldn't be compared to regexp
 				return false;
 			}
 
-			if (! this.value_.length) {
+			if (! this.validator_.value.length) {
 				// let 'required' rule take care of any empty variables
 				return true;
 			}
@@ -805,7 +810,7 @@ export default
 				expression = new RegExp(expression);
 			}
 
-			if (this.value_.match(expression)) {
+			if (this.validator_.value.match(expression)) {
 				return true;
 			}
 			else {
@@ -819,7 +824,7 @@ export default
 		 */
 		boolean_()
 		{
-			return (typeof this.value_ === 'boolean');
+			return (typeof this.validator_.value === 'boolean');
 		},
 
 
@@ -828,7 +833,7 @@ export default
 		 */
 		string_()
 		{
-			return (typeof this.value_ === 'string');
+			return (typeof this.validator_.value === 'string');
 		},
 
 
@@ -837,7 +842,7 @@ export default
 		 */
 		number_()
 		{
-			return (typeof this.value_ === 'number');
+			return (typeof this.validator_.value === 'number');
 		},
 
 
@@ -846,7 +851,7 @@ export default
 		 */
 		array_()
 		{
-			return (typeof this.value_ === 'object');
+			return (typeof this.validator_.value === 'object');
 		},
 
 
@@ -855,7 +860,7 @@ export default
 		 */
 		email_()
 		{
-			if (typeof this.value_ === 'string' && ! this.value_.length) {
+			if (typeof this.validator_.value === 'string' && ! this.validator_.value.length) {
 				return true
 			}
 			else {
@@ -869,7 +874,7 @@ export default
 		 */
 		alphaNum_()
 		{
-			if (typeof this.value_ === 'string' && ! this.value_.length) {
+			if (typeof this.validator_.value === 'string' && ! this.validator_.value.length) {
 				return true;
 			}
 			else {
@@ -883,7 +888,7 @@ export default
 		 */
 		alphaDash_()
 		{
-			if (typeof this.value_ === 'string' && ! this.value_.length) {
+			if (typeof this.validator_.value === 'string' && ! this.validator_.value.length) {
 				return true;
 			}
 			else {
