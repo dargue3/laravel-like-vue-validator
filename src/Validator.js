@@ -1,7 +1,5 @@
 /**
  * Validator mixin inspired by Laravel's Validator API
- *
- * https://github.com/dargue3/laravel-like-vue-validator
  */
 export default
 {
@@ -14,18 +12,19 @@ export default
 			watching_: {},
 			validRules_: {
 				required: 	function(args) { return this.required_(args) },	// the field needs to have something in it
-				max: 		function(args) { return this.max_(args) }, 		// the field must be less than a given argument in length or size
-				min: 		function(args) { return this.min_(args) }, 		// the field must be greater than a given argument in length or size
-				size: 		function(args) { return this.size_(args) }, 	// the field must be of a given size in length or value
-				equals: 	function(args) { return this.equals_(args) }, 	// the field must equal to a given value
-				in: 		function(args) { return this.in_(args) }, 		// the field must equal one of the given arguments
-				boolean: 	function(args) { return this.boolean_(args) },  // the field must be a boolean
-				string: 	function(args) { return this.string_(args) },  	// the field must be a string
-				number: 	function(args) { return this.number_(args) },  	// the field must be a number
-				array: 		function(args) { return this.array_(args) },  	// the field must be an array
-				regex: 		function(args) { return this.regex_(args) },  	// the field must be a string that matches a given regular expression. BE CAREFUL, DON'T INCLUDE PIPES! 
-				alpha_num: 	function(args) { return this.alphaNum(args) },  // the field must be a string with only alphanumeric characters
-				email: 		function(args) { return this.email_(args) }, 	// the field must be a valid email
+				max: 				function(args) { return this.max_(args) }, 		// the field must be less than a given argument in length or size
+				min: 				function(args) { return this.min_(args) }, 		// the field must be greater than a given argument in length or size
+				size: 			function(args) { return this.size_(args) }, 	// the field must be of a given size in length or value
+				equals: 		function(args) { return this.equals_(args) }, 	// the field must equal to a given value
+				in: 				function(args) { return this.in_(args) }, 		// the field must equal one of the given arguments
+				boolean: 		function(args) { return this.boolean_(args) },  // the field must be a boolean
+				string: 		function(args) { return this.string_(args) },  	// the field must be a string
+				number: 		function(args) { return this.number_(args) },  	// the field must be a number
+				array: 			function(args) { return this.array_(args) },  	// the field must be an array
+				regex: 			function(args) { return this.regex_(args) },  	// the field must be a string that matches a given regular expression. BE CAREFUL, DON'T INCLUDE PIPES! 
+				alpha_num: 	function(args) { return this.alphaNum_(args) },  // the field must be a string with only alphanumeric characters
+				alpha_dash: function(args) { return this.alphaDash_(args) },  // the field must be a string with only alphanumeric characters and dashes + underscores
+				email: 			function(args) { return this.email_(args) }, 	// the field must be a valid email
 			},
 			value_: null, 			// the value of the variable in question
 			path_: null, 			// the full path of the variable (e.g. user.name.firstname)
@@ -236,7 +235,7 @@ export default
 		{
 			if (rule[0] === 'regex') {
 				// regex could have commas
-				var args = rule[1];
+				return rule[1];
 			}
 			else {
 				var args = rule[1].split(','); 
@@ -780,7 +779,13 @@ export default
 		regex_(expression)
 		{
 			if (typeof this.value_ !== 'string') {
+				// values that aren't strings shouldn't be compared to regexp
 				return false;
+			}
+
+			if (! this.value_.length) {
+				// let 'required' rule take care of any empty variables
+				return true;
 			}
 
 			if (! (expression instanceof RegExp)) {
@@ -862,13 +867,27 @@ export default
 		/**
 		 * The variable must be a string with only alphanumeric characters
 		 */
-		alphaNum()
+		alphaNum_()
 		{
 			if (typeof this.value_ === 'string' && ! this.value_.length) {
 				return true;
 			}
 			else {
 				return this.regex_(/^[a-zA-Z0-9]+$/);
+			}
+		},
+
+
+		/**
+		 * The variable must be a string with only alphanumeric characters + dashes and underscores
+		 */
+		alphaDash_()
+		{
+			if (typeof this.value_ === 'string' && ! this.value_.length) {
+				return true;
+			}
+			else {
+				return this.regex_(/^[a-zA-Z0-9_-]+$/);
 			}
 		},
 	},

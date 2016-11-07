@@ -164,16 +164,31 @@ describe("Validator", function() {
 
     it('has an "alpha_num" rule that returns true if a variable is comprised of only alphanumeric characters', function () {
       vm.value_ = 'thebesttest';
-      expect(vm.alphaNum()).toBeTruthy();
+      expect(vm.alphaNum_()).toBeTruthy();
 
       vm.value_ = 't3stsArEC00l';
-      expect(vm.alphaNum()).toBeTruthy();
+      expect(vm.alphaNum_()).toBeTruthy();
 
       vm.value_ = 10;
-      expect(vm.alphaNum()).toBeFalsy();
+      expect(vm.alphaNum_()).toBeFalsy();
 
       vm.value_ = 'd@ntheman!';
-      expect(vm.alphaNum()).toBeFalsy();
+      expect(vm.alphaNum_()).toBeFalsy();
+    });
+
+
+    it('has an "alpha_dash" rule that returns true if a variable is comprised of only alphanumeric characters and dashes + underscores', function () {
+        vm.value_ = 'thebes_ttest';
+        expect(vm.alphaDash_()).toBeTruthy();
+
+        vm.value_ = 't3sts-ArE-C00l';
+        expect(vm.alphaDash_()).toBeTruthy();
+
+        vm.value_ = 10;
+        expect(vm.alphaDash_()).toBeFalsy();
+
+        vm.value_ = 'd@n_theman!';
+        expect(vm.alphaDash_()).toBeFalsy();
     });
 
 
