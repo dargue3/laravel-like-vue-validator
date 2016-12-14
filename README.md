@@ -59,7 +59,10 @@ examples = [
  > Any arguments that return something truthy from `parseFloat(arg)` are saved as numbers and not strings.
 
 
-`registerErrorChecking()` optionally takes a fourth and fifth argument. The fourth is a boolean that tells whether or not to automatically run error checking whenever the variable changes. The fifth argument (for arrays only) 
+
+`registerErrorChecking()` optionally takes a fourth and fifth argument. The fourth is a boolean that tells whether or not to automatically run error checking whenever the variable changes. 
+
+The fifth argument (for arrays only) tells the validator how many indices of `this.errors` should be allocated for this array. This is useful when using a `v-for` and dynamically adding and subtracting from the array.
 
 ```javascript
 registerErrorChecking('name', 'required', 'Enter a name', false) // only checked manually
