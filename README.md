@@ -58,7 +58,7 @@ examples = [
 
  > Any arguments that return something truthy from `parseFloat(arg)` are saved as numbers and not strings.
 
-
+---
 
 `registerErrorChecking()` optionally takes a fourth and fifth argument. The fourth is a boolean that tells whether or not to automatically run error checking whenever the variable changes. 
 
