@@ -58,12 +58,21 @@ examples = [
 
  > Any arguments that return something truthy from `parseFloat(arg)` are saved as numbers and not strings.
 
+
+`registerErrorChecking()` optionally takes a fourth and fifth argument. The fourth is a boolean that tells whether or not to automatically run error checking whenever the variable changes. The fifth argument (for arrays only) 
+
+```javascript
+registerErrorChecking('name', 'required', 'Enter a name', false) // only checked manually
+
+registerErrorChecking('users.*.name', 'required', 'Enter a name', false, 50) // this.errors.users.length == 50
+```
+
 ---
 
 ### Error checking
 
 #### Automatic
-By default, whenever Vue detects a change, the validator will automatically re-run error checking on that variable. You can switch to manual error checking with an optional fourth argument.
+By default, whenever Vue detects a change, the validator will automatically re-run error checking on that variable. You can switch to manual error checking with the optional fourth argument.
 ```javascript
 this.me = 'Dan'
 this.you = 'github'
@@ -153,7 +162,7 @@ console.log(this.errors.users[0].email) 	// ''
 console.log(this.errors.users[1].email) 	// 'Invalid email' 	
 ```
 
-
+---
 
 ## Applications
 ### Displaying in the DOM
