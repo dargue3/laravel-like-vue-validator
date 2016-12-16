@@ -156,9 +156,9 @@ this.registerErrorChecking('user.age', 'required|min:18', ['Enter your age', 'Ad
 
 var errors = this.errorCheck('user')
 
-console.log(errors)					// 2
-console.log(this.errors.user.name) 	// 'Enter a name' 	
-console.log(this.errors.user.age) 	// 'Adults Only' 	
+console.log(errors)			// 2
+console.log(this.errors.user.name)	// 'Enter a name' 	
+console.log(this.errors.user.age)	// 'Adults Only' 	
 ```
 
 ##### Check a specific key on a variable
@@ -176,9 +176,9 @@ this.registerErrorChecking('location.city.zip', 'required|size:5', ['Enter a zip
 
 var errors = this.errorCheck('location.city.zip') 
 
-console.log(errors)								// 1
-console.log(this.errors.location.city.name) 	// '' 	
-console.log(this.errors.location.city.zip) 		// 'Invalid zip' 	
+console.log(errors)				// 1
+console.log(this.errors.location.city.name)	// '' 	
+console.log(this.errors.location.city.zip)	// 'Invalid zip' 	
 ```
 
 ##### Check a specific index in an array or the whole thing
@@ -201,13 +201,13 @@ this.registerErrorChecking('goodIdeas.*.step', 'alpha_num', 'Only A thru Z')
 
 var errors = this.errorCheck('users.1.email')
 
-console.log(errors)							// 1
+console.log(errors)				// 1
 console.log(this.errors.users[0].email) 	// '' 	
 console.log(this.errors.users[1].email) 	// 'Invalid email' 
 
 errors = this.errorCheck('goodIdeas')
 
-console.log(errors)							// 2
+console.log(errors)				// 2
 console.log(this.errors.goodIdeas[0].step) 	// '' 
 console.log(this.errors.goodIdeas[1].step) 	// ''
 console.log(this.errors.goodIdeas[2].step) 	// 'Only A thru Z'
@@ -277,7 +277,7 @@ const vm = new Vue({
 	/**
 	 * Register error checking in beforeCompiled() to ensure this.errors is
 	 * initialized before loading the DOM
-   */
+   	 */
 	beforeCompiled: function()
 	{
 		this.registerErrorChecking('users.*.name', 'required|max:50', ['Enter a name', 'Your name is too long!'])
@@ -298,8 +298,4 @@ const vm = new Vue({
 		
 	}
 })
-```		
-
-
-#rookiecard
-#code
+```
