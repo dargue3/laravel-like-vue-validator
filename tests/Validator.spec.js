@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import Validator from './../../../resources/assets/js/mixins/Validator.js'
+import Validator from '../src/Validator.js'
 
 describe("Validator", function() {
 
@@ -170,7 +170,7 @@ describe("Validator", function() {
       expect(vm.alphaNum_()).toBeTruthy();
 
       vm.validator_.value = 10;
-      expect(vm.alphaNum_()).toBeFalsy();
+      expect(vm.alphaNum_()).toBeTruthy();
 
       vm.validator_.value = 'd@ntheman!';
       expect(vm.alphaNum_()).toBeFalsy();
@@ -185,7 +185,7 @@ describe("Validator", function() {
         expect(vm.alphaDash_()).toBeTruthy();
 
         vm.validator_.value = 10;
-        expect(vm.alphaDash_()).toBeFalsy();
+        expect(vm.alphaDash_()).toBeTruthy();
 
         vm.validator_.value = 'd@n_theman!';
         expect(vm.alphaDash_()).toBeFalsy();
@@ -272,7 +272,7 @@ describe("Validator", function() {
       expect(vm.regex_(args)).toBeFalsy();
 
       vm.validator_.value = 10;
-      expect(vm.regex_(args)).toBeFalsy();
+      expect(vm.regex_(args)).toBeTruthy();
 
     // same as above but developer also included forward-slashes at beginning and end
       args = ['/^[0-9]+$/'];
@@ -284,7 +284,7 @@ describe("Validator", function() {
       expect(vm.regex_(args)).toBeFalsy();
 
       vm.validator_.value = 10;
-      expect(vm.regex_(args)).toBeFalsy();
+      expect(vm.regex_(args)).toBeTruthy();
 
       // as a plain expression (how the argument looks if called by another rule such as 'email')
       args = /^[0-9]+$/;
@@ -296,7 +296,7 @@ describe("Validator", function() {
       expect(vm.regex_(args)).toBeFalsy();
 
       vm.validator_.value = 10;
-      expect(vm.regex_(args)).toBeFalsy();
+      expect(vm.regex_(args)).toBeTruthy();
     });
 
     it('creates an entry in errors object that the developer can manually set/get', function () {
@@ -526,7 +526,7 @@ describe("Validator", function() {
     });
     
 
-    it('changes the size of this.errors to match the array if the array length has changed', function () {
+    it('changes the size of this.errors to match the array if the array length has increased', function () {
       vm.players = [
         {name: 'Tester', email: 'tester@rookiecard.com'},
       ];
@@ -558,7 +558,18 @@ describe("Validator", function() {
       vm.errorCheck('players');
 
     // same length as players again
-      expect(vm.errors.players.length).toEqual(2); 
+      expect(vm.errors.players.length).toEqual(3); 
+    });
+
+
+    it('preallocates an array within this.errors to the length of the given fifth argument', function () {
+        vm.players = [
+            {name: 'Tester', email: 'tester@rookiecard.com'},
+        ];
+
+        vm.registerErrorChecking('players.*.email', 'email', ['Invalid email'], null, 3);
+
+        expect(vm.errors.players.length).toEqual(3);
     });
 
 

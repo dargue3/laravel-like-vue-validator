@@ -872,12 +872,7 @@ export default
 		 */
 		email_()
 		{
-			if (typeof this.validator_.value === 'string' && ! this.validator_.value.length) {
-				return true
-			}
-			else {
-				return this.regex_(/^[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}{\'?]+)*@([a-z0-9_][-a-z0-9_]*(\.[-a-z0-9_]+)*\.(aero|arpa|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|pro|travel|mobi|[a-z]{2,10})|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,5})?$/i);
-			}
+			return this.regex_(/^[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}{\'?]+)*@([a-z0-9_][-a-z0-9_]*(\.[-a-z0-9_]+)*\.(aero|arpa|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|pro|travel|mobi|[a-z]{2,10})|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,5})?$/i);
 		},
 
 
@@ -886,12 +881,7 @@ export default
 		 */
 		alphaNum_()
 		{
-			if (typeof this.validator_.value === 'string' && ! this.validator_.value.length) {
-				return true;
-			}
-			else {
-				return this.regex_(/^[a-zA-Z0-9]+$/);
-			}
+			return this.regex_(/^[a-zA-Z0-9]+$/);
 		},
 
 
@@ -900,12 +890,7 @@ export default
 		 */
 		alphaDash_()
 		{
-			if (typeof this.validator_.value === 'string' && ! this.validator_.value.length) {
-				return true;
-			}
-			else {
-				return this.regex_(/^[a-zA-Z0-9_-]+$/);
-			}
+			return this.regex_(/^[a-zA-Z0-9_-]+$/);
 		},
 	},
 }
